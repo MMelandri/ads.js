@@ -48,8 +48,11 @@ var stocker = ads.connect(connection, function () {
 
                 logger.info(tag + " - fin de cycle lecture des données");
                 logger.info(err);
-                clearInterval(john);
-                stocker.end();
+
+                if (err) {
+                    clearInterval(john);
+                    stocker.end();
+                }
             });
         }, 1000);
     });
