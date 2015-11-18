@@ -13,11 +13,11 @@ var connection = {
 
 var stocker = ads.connect(connection, function () {
 
-    logger.verbose(tag + " - création d'une nouvelle connexion avec : " + JSON.stringify(connection));
+    logger.info(tag + " - création d'une nouvelle connexion avec : " + JSON.stringify(connection));
 
     stocker.readDeviceInfo(function (err, result) {
-        logger.warn(err);
-        logger.verbose(result);
+        logger.info(err);
+        logger.info(result);
         stocker.end();
     });
 
