@@ -30,10 +30,10 @@ var stocker = ads.connect(connection, function () {
         logger.info(result);
 
         logger.info("Lecture des entrées");
-        self.async.eachSeries(handles, function (handle, each_cb) {
+        async.eachSeries(handles, function (handle, each_cb) {
 
             /**LECTURE DES VARIABLES */
-            self.stocker.read(handle, function (err, newhandle) {
+            stocker.read(handle, function (err, newhandle) {
                 logger.info(tag + " donnée : ");
                 logger.info(newhandle);
                 if (err) {
@@ -45,7 +45,8 @@ var stocker = ads.connect(connection, function () {
 
         }, function (err) {
 
-            logger.debug(self.conf.tag + " - fin de cycle lecture des données : " + (new Date().getTime() - self.start) + " ms depuis de le départ");
+            logger.info(tag + " - fin de cycle lecture des données");
+            logger.info(err);
 
             stocker.end();
         });
