@@ -19,7 +19,7 @@ var stocker = ads.connect(connection, function () {
         logger.warn(err);
         logger.verbose(result);
         stocker.end();
-    };
+    });
 
 });
 
