@@ -118,7 +118,8 @@ var connect = function(cb) {
     ads.tcpClient.on('error', ads.dataCallback);
 
     ads.tcpClient.on('close', function(had_error) {
-        ads.adsClient.emit('error', "Fermeture du socket " + (had_error ? "avec erreur" : "sans erreur"));
+        //ads.adsClient.emit('error', "Fermeture du socket " + (had_error ? "avec erreur" : "sans erreur"));
+        //console.log("Fermeture du socket " + (had_error ? "avec erreur" : "sans erreur");
     });
 
     ads.tcpClient.on('connect', function() {
@@ -130,7 +131,7 @@ var connect = function(cb) {
     });
 
     ads.tcpClient.on('lookup', function() {
-        console.log("ads.js : hostname resolved");
+        //console.log("ads.js : hostname resolved");
     });
 };
 
