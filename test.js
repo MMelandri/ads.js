@@ -8,7 +8,7 @@ var tag = "test";
 var connection = {
     host: "192.168.52.204",
     amsNetIdTarget: "5.24.97.112.1.1",
-    amsNetIdSource: ""
+    amsNetIdSource: "192.168.50.101.1.1"
 };
 
 var stocker = ads.connect(connection, function () {
