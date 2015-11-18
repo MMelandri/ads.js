@@ -30,27 +30,28 @@ var stocker = ads.connect(connection, function () {
         logger.info(result);
 
         logger.info("Lecture des entrées");
-        async.eachSeries(handles, function (handle, each_cb) {
+        var john = setInterval(function() {
+            async.eachSeries(handles, function (handle, each_cb) {
 
-            /**LECTURE DES VARIABLES */
-            stocker.read(handle, function (err, newhandle) {
-                logger.info(tag + " donnée : ");
-                logger.info(newhandle);
-                if (err) {
-                    var errmsg = tag + " - mainInterval : erreur lecture des données : " + err;
-                    return each_cb(new Error(errmsg));
-                }
-                each_cb(null);
+                /**LECTURE DES VARIABLES */
+                stocker.read(handle, function (err, newhandle) {
+                    logger.info(tag + " donnée : ");
+                    logger.info(newhandle);
+                    if (err) {
+                        var errmsg = tag + " - mainInterval : erreur lecture des données : " + err;
+                        return each_cb(new Error(errmsg));
+                    }
+                    each_cb(null);
+                });
+
+            }, function (err) {
+
+                logger.info(tag + " - fin de cycle lecture des données");
+                logger.info(err);
+                clearInterval(john);
+                stocker.end();
             });
-
-        }, function (err) {
-
-            logger.info(tag + " - fin de cycle lecture des données");
-            logger.info(err);
-
-            stocker.end();
-        });
-
+        }, 1000);
     });
 
 });
