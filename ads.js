@@ -116,6 +116,22 @@ var connect = function(cb) {
     };
 
     ads.tcpClient.on('error', ads.dataCallback);
+
+    ads.tcpClient.on('close', function(had_error) {
+        ads.adsClient.emit('error', "Fermeture du socket " + (had_error ? "avec erreur" : "sans erreur"));
+    });
+
+    ads.tcpClient.on('connect', function() {
+        console.log("ads.js : Socket connecté");
+    });
+
+    ads.tcpClient.on('end', function(){
+        console.log("ads.js : déconnexion du socket");
+    });
+
+    ads.tcpClient.on('lookup', function() {
+        console.log("ads.js : hostname resolved");
+    });
 };
 
 
