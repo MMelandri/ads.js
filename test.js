@@ -35,7 +35,6 @@ var stocker = ads.connect(connection, function () {
 
                 /**LECTURE DES VARIABLES */
                 stocker.read(handle, function (err, newhandle) {
-                    logger.info(tag + " donnée : ");
                     logger.info(newhandle);
                     if (err) {
                         var errmsg = tag + " - mainInterval : erreur lecture des données : " + err;
@@ -54,7 +53,7 @@ var stocker = ads.connect(connection, function () {
                     stocker.end();
                 }
             });
-        }, 1000);
+        }, 200);
     });
 
 });
