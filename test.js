@@ -15,6 +15,7 @@ var stocker = ads.connect(connection, function () {
 
     logger.verbose(tag + " - création d'une nouvelle connexion avec : " + JSON.stringify(connection));
 
+    stocker.end();
 });
 
 //    // READ DEVICE INFO
