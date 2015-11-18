@@ -123,11 +123,11 @@ var connect = function(cb) {
     });
 
     ads.tcpClient.on('connect', function() {
-        console.log("ads.js : Socket en cours de connexion");
+        //console.log("ads.js : Socket en cours de connexion");
     });
 
     ads.tcpClient.on('end', function(){
-        console.log("ads.js : déconnexion du socket");
+        //console.log("ads.js : déconnexion du socket");
     });
 
     ads.tcpClient.on('lookup', function() {
