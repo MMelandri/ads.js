@@ -4,12 +4,22 @@
 
 var ads = require('ads');
 var logger = require('winston');
+var async = require('async');
 var tag = "test";
 var connection = {
     host: "192.168.52.204",
     amsNetIdTarget: "5.24.97.112.1.1",
     amsNetIdSource: "192.168.50.101.1.1"
 };
+var handles = [
+    {symname: '.SARTICLEOFTALON', bytelength: ads.STRING, propname: 'value'},
+    {symname: '.SARTICLETALON', bytelength: ads.STRING, propname: 'value'},
+    {symname: '.NENSACHEUSEFORMATTALON', bytelength: ads.DINT, propname: 'value'},
+    {symname: '.NENSACHEUSEFORMATORDER', bytelength: ads.DINT, propname: 'value'},
+    {symname: '.NTALONCOUNTERTOT', bytelength: ads.DINT, propname: 'value'},
+    {symname: '.NENSACHEUSECONVEYORTALON', bytelength: ads.DINT, propname: 'value'},
+    {symname: '.BWATCHDOGFILLINGTOTALON', bytelength: ads.INT, propname: 'value'}
+];
 
 var stocker = ads.connect(connection, function () {
 
@@ -18,7 +28,28 @@ var stocker = ads.connect(connection, function () {
     stocker.readDeviceInfo(function (err, result) {
         logger.info(err);
         logger.info(result);
-        stocker.end();
+
+        logger.info("Lecture des entrées");
+        self.async.eachSeries(handles, function (handle, each_cb) {
+
+            /**LECTURE DES VARIABLES */
+            self.stocker.read(handle, function (err, newhandle) {
+                logger.info(tag + " donnée : ");
+                logger.info(newhandle);
+                if (err) {
+                    var errmsg = tag + " - mainInterval : erreur lecture des données : " + err;
+                    return each_cb(new Error(errmsg));
+                }
+                each_cb(null);
+            });
+
+        }, function (err) {
+
+            logger.debug(self.conf.tag + " - fin de cycle lecture des données : " + (new Date().getTime() - self.start) + " ms depuis de le départ");
+
+            stocker.end();
+        });
+
     });
 
 });
