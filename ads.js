@@ -122,7 +122,7 @@ var connect = function(cb) {
     });
 
     ads.tcpClient.on('connect', function() {
-        console.log("ads.js : Socket connecté");
+        console.log("ads.js : Socket en cours de connexion");
     });
 
     ads.tcpClient.on('end', function(){
