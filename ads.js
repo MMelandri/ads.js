@@ -256,7 +256,7 @@ var read = function(handle, cb) {
                 indexGroup: handle.indexGroup || 0x0000F005,
                 indexOffset: handle.symhandle,
                 bytelength: handle.totalByteLength,
-                symname: handle.symnane,
+                symname: handle.symname,
             };
 
             readCommand.call(ads, commandOptions, function(err, result) {
