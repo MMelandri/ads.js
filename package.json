@@ -1,5 +1,5 @@
 {
-    "name": "ads",
+    "name": "io_ads",
     "version": "0.1.4",
     "description": "Twincat ADS protocol implementation for NodeJS",
     "main": "ads.js",
