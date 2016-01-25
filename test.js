@@ -7,19 +7,77 @@ var logger = require('winston');
 var async = require('async');
 var tag = "test";
 var connection = {
-    host: "192.168.52.204",
-    amsNetIdTarget: "5.24.97.112.1.1",
+    host: "192.168.52.201",
+    amsNetIdTarget: "5.25.51.96.1.1",
     amsNetIdSource: "192.168.50.101.1.1"
 };
 var handles = [
-    {symname: '.SARTICLEOFTALON', bytelength: ads.STRING, propname: 'value'},
-    {symname: '.SARTICLETALON', bytelength: ads.STRING, propname: 'value'},
-    {symname: '.NENSACHEUSEFORMATTALON', bytelength: ads.DINT, propname: 'value'},
-    {symname: '.NENSACHEUSEFORMATORDER', bytelength: ads.DINT, propname: 'value'},
-    {symname: '.NTALONCOUNTERTOT', bytelength: ads.DINT, propname: 'value'},
-    {symname: '.NENSACHEUSECONVEYORTALON', bytelength: ads.DINT, propname: 'value'},
-    {symname: '.BWATCHDOGFILLINGTOTALON', bytelength: ads.INT, propname: 'value'},
-    
+        //~ {symname: '.NBUFFERCOUNTERSACHETSFORMAT1', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.NBUFFERCOUNTERSACHETSFORMAT2', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.SARTICLEBUFFERFORMAT1', bytelength: ads.STRING, propname: 'value'},
+        //~ {symname: '.SARTICLEBUFFERFORMAT2', bytelength: ads.STRING, propname: 'value'},
+        //~ {symname: '.NENSACHEUSEFORMAT1PRODUCED', bytelength: ads.DINT, propname: 'value'},
+        //~ {symname: '.NENSACHEUSEFORMAT2PRODUCED', bytelength: ads.DINT, propname: 'value'},
+        //~ {symname: '.STCOUNTERTOT', bytelength: ads.DINT, propname: 'value'},
+        //~ {symname: '.BWATCHDOGFILLINGTOTALON', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.NACCUCOUNTERFORMAT1', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.NACCUCOUNTERFORMAT2', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.NEJECTCOUNTERFORMAT1', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.NEJECTCOUNTERFORMAT2', bytelength: ads.INT, propname: 'value'},
+        //~ {symname: '.SARTICLEENSACHEUSE', bytelength: ads.STRING, propname: 'value'},
+        //~ {symname: '.INDOOR1CLOSED', bytelength: ads.BOOL, propname: 'value'},
+        //~ {symname: '.INPHOTOCELLBOX5B8ACCUMULATIONBELTSTART', bytelength: ads.BOOL, propname: 'value'},
+        //~ {symname: '.INPHOTOCELLBOX5B9ACCUMULATIONBELTSTOP', bytelength: ads.BOOL, propname: 'value'},
+        //~ {symname: '.BAUTOMATIC', bytelength: ads.BOOL, propname: 'value'},
+    {
+        symname: '.STBUFFERJOB',
+        bytelength: [
+                ads.STRING,
+                ads.STRING,
+                ads.WORD,
+                ads.WORD,
+                ads.WORD,
+                ads.WORD,
+                ads.WORD,
+                ads.WORD,
+                ads.WORD,
+                ads.WORD,
+                ads.UINT,
+                ads.DINT,
+                ads.UINT,
+                ads.BOOL,
+                ads.BOOL,
+                ads.STRING,
+                ads.REAL,
+                ads.REAL,
+                ads.INT,
+                ads.INT,
+                ads.INT,
+        ],
+        propname: [
+                'ArticleOF',
+                'Article',
+                'DateTime_wYear',
+                'DateTime_wMonth',
+                'DateTime_wDayOfWeek',
+                'DateTime_wDay',
+                'DateTime_wHour',
+                'DateTime_wMinute',
+                'DateTime_wSecond',
+                'DateTime_wMilliseconds ',
+                'Quantity',
+                'Color',
+                'State',
+                'Button',
+                'ButtonOld',
+                'TextAddress',
+                'PositionX',
+                'PositionY',
+                'MoveMode',
+                'Depth',
+                'BufferNr',
+        ]
+    }
 ];
 var handles2 = [
         {
@@ -82,23 +140,15 @@ var handles2 = [
             ]
         }
     ];
+var tags = {};
 
-
-var stocker = ads.connect(connection, function () {
-
-    logger.info(tag + " - création d'une nouvelle connexion avec : " + JSON.stringify(connection));
-
-    stocker.readDeviceInfo(function (err, result) {
-        logger.info(err);
-        logger.info(result);
-
-        logger.info("Lecture des entrées");
-        var john = setInterval(function() {
-            async.eachSeries(handles2, function (handle, each_cb) {
+function readData(handles, api, cb) {
+        async.eachSeries(handles, function (handle, each_cb) {
 
                 /**LECTURE DES VARIABLES */
                 stocker.read(handle, function (err, newhandle) {
-                    logger.info(newhandle);
+                    tags[newhandle.symname.substring(1, newhandle.symname.length)] = newhandle;
+                    logger.info(tags);
                     if (err) {
                         var errmsg = tag + " - mainInterval : erreur lecture des données : " + err;
                         return each_cb(new Error(errmsg));
@@ -109,14 +159,35 @@ var stocker = ads.connect(connection, function () {
             }, function (err) {
 
                 logger.info(tag + " - fin de cycle lecture des données");
-                logger.info(err);
+                if (err) logger.info(err);
 
+                return cb(err);
+             }
+        );
+}
+
+var stocker = ads.connect(connection, function () {
+
+    logger.info(tag + " - création d'une nouvelle connexion avec : " + JSON.stringify(connection));
+
+    stocker.readDeviceInfo(function (err, result) {
+        logger.info(err);
+        logger.info(result);
+
+        logger.info("Lecture des entrées");
+
+        function callback(err) {
                 if (err) {
-                    clearInterval(john);
-                    stocker.end();
+                        stocker.end();
+                        process.exit();
                 }
-            });
-        }, 200);
+                setTimeout(startReadData, 200);
+        };
+        function startReadData() {
+                readData(handles, stocker, callback);
+        };
+        startReadData();
+        
     });
 
 });
