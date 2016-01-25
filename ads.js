@@ -259,6 +259,10 @@ var read = function(handle, cb) {
                 symname: handle.symname,
             };
 
+            if(typeof handle.arrayid !== 'undefined') {
+                commandOptions += handle.totalByteLength * handle.arrayid;
+            }
+
             readCommand.call(ads, commandOptions, function(err, result) {
                 integrateResultInHandle(handle, result);
                 cb.call(ads.adsClient, err, handle);
@@ -281,6 +285,11 @@ var write = function(handle, cb) {
                 bytes: handle.bytes,
                 symname: handle.symname,
             };
+
+            if(typeof handle.arrayid !== 'undefined') {
+                commandOptions += handle.totalByteLength * handle.arrayid;
+            }
+            
             writeCommand.call(ads, commandOptions, function(err, result) {
                 cb.call(ads.adsClient, err);
             });
@@ -368,7 +377,30 @@ var getSymbols = function(cb) {
                 symbol.comment = commentBuf.toString('utf8', 0, findStringEnd(commentBuf, 0));
                 pos = pos+commentLength;
 
-                symbols.push(symbol);
+                if(symbol.type.indexOf('ARRAY') > -1) {     
+                    var re = /ARRAY[\s]+\[([\-\d]+)\.\.([\-\d]+)\][\s]+of[\s]+(.*)/i;       
+                    var m;      
+                            
+                    if((m = re.exec(symbol.type)) !== null) {
+
+                        if(m.index === re.lastIndex) {
+                            re.lastIndex++;     
+                        }
+
+                        m[1] = parseInt(m[1]);
+                        m[2] = parseInt(m[2]);
+
+                        for(var i=m[1]; i<=m[2]; i++) {
+                            var newSymbol = JSON.parse(JSON.stringify(symbol));
+                            newSymbol.arrayid = i + 0;
+                            newSymbol.type = m[3] + '';
+                            newSymbol.name += '[' + i + ']';
+                            symbols.push(newSymbol);
+                        };  
+                    }
+                } else {
+                    symbols.push(symbol);
+                }
             }            
 
             cb.call(ads.adsClient, err, symbols);
