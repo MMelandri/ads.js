@@ -2,7 +2,7 @@
  * Created by jledun on 18/11/15.
  */
 
-var ads = require('ads');
+var ads = require('./ads.js');
 var logger = require('winston');
 var async = require('async');
 var tag = "test";
@@ -18,8 +18,71 @@ var handles = [
     {symname: '.NENSACHEUSEFORMATORDER', bytelength: ads.DINT, propname: 'value'},
     {symname: '.NTALONCOUNTERTOT', bytelength: ads.DINT, propname: 'value'},
     {symname: '.NENSACHEUSECONVEYORTALON', bytelength: ads.DINT, propname: 'value'},
-    {symname: '.BWATCHDOGFILLINGTOTALON', bytelength: ads.INT, propname: 'value'}
+    {symname: '.BWATCHDOGFILLINGTOTALON', bytelength: ads.INT, propname: 'value'},
+    
 ];
+var handles2 = [
+        {
+            symname: [
+                '.NBUFFERCOUNTERSACHETSFORMAT1',
+                '.NBUFFERCOUNTERSACHETSFORMAT2',
+                '.SARTICLEBUFFERFORMAT1',
+                '.SARTICLEBUFFERFORMAT2',
+                '.NENSACHEUSEFORMAT1PRODUCED',
+                '.NENSACHEUSEFORMAT2PRODUCED',
+                '.STCOUNTERTOT',
+                '.BWATCHDOGFILLINGTOTALON',
+                '.NACCUCOUNTERFORMAT1',
+                '.NACCUCOUNTERFORMAT2',
+                '.NEJECTCOUNTERFORMAT1',
+                '.NEJECTCOUNTERFORMAT2',
+                '.SARTICLEENSACHEUSE',
+                '.INDOOR1CLOSED',
+                '.INPHOTOCELLBOX5B8ACCUMULATIONBELTSTART',
+                '.INPHOTOCELLBOX5B9ACCUMULATIONBELTSTOP',
+                '.BAUTOMATIC', 
+            ],
+            bytelength: [
+                ads.INT,
+                ads.INT,
+                ads.STRING,
+                ads.STRING,
+                ads.DINT, 
+                ads.DINT, 
+                ads.DINT, 
+                ads.INT,
+                ads.INT,
+                ads.INT,
+                ads.INT,
+                ads.INT,
+                ads.STRING,
+                ads.BOOL,
+                ads.BOOL,
+                ads.BOOL,
+                ads.BOOL,
+            ],
+            propname: [
+                'NBUFFERCOUNTERSACHETSFORMAT1',
+                'NBUFFERCOUNTERSACHETSFORMAT2',
+                'SARTICLEBUFFERFORMAT1',
+                'SARTICLEBUFFERFORMAT2',
+                'NENSACHEUSEFORMAT1PRODUCED',
+                'NENSACHEUSEFORMAT2PRODUCED',
+                'STCOUNTERTOT',
+                'BWATCHDOGFILLINGTOTALON',
+                'NACCUCOUNTERFORMAT1',
+                'ACCUCOUNTERFORMAT2',
+                'NEJECTCOUNTERFORMAT1',
+                'NEJECTCOUNTERFORMAT2',
+                'SARTICLEENSACHEUSE',
+                'INDOOR1CLOSED',
+                'INPHOTOCELLBOX5B8ACCUMULATIONBELTSTART',
+                'INPHOTOCELLBOX5B9ACCUMULATIONBELTSTOP',
+                'BAUTOMATIC', 
+            ]
+        }
+    ];
+
 
 var stocker = ads.connect(connection, function () {
 
@@ -31,7 +94,7 @@ var stocker = ads.connect(connection, function () {
 
         logger.info("Lecture des entrées");
         var john = setInterval(function() {
-            async.eachSeries(handles, function (handle, each_cb) {
+            async.eachSeries(handles2, function (handle, each_cb) {
 
                 /**LECTURE DES VARIABLES */
                 stocker.read(handle, function (err, newhandle) {
