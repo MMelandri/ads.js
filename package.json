@@ -1,15 +1,22 @@
 {
-    "name": "io_ads",
-    "version": "0.1.4",
-    "description": "Twincat ADS protocol implementation for NodeJS",
-    "main": "ads.js",
-    "keywords": ["twincat","plc", "ads", "beckhoff"],
-    "author": "Julien Ledun",
-    "licenses": [{
-        "type": "MIT"
-    }],
-    "repository" : {
-		"type" : "git",
-		"url" : "https://github.com/jledun/ads.js.git"
-	}
+  "name": "io_ads",
+  "version": "0.1.5",
+  "description": "Twincat ADS protocol implementation for NodeJS",
+  "main": "ads.js",
+  "keywords": [
+    "twincat",
+    "plc",
+    "ads",
+    "beckhoff"
+  ],
+  "author": "Julien Ledun",
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jledun/ads.js.git"
+  }
 }
