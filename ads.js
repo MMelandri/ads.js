@@ -429,9 +429,16 @@ var getHandle = function(handle, cb) {
                 cb.call(ads, err);
             } else {
                 if (result.length > 0) {
-                    ads.symHandlesToRelease.push(result);
-                    handle.symhandle = result.readUInt32LE(0);
-                    cb.call(ads, null, handle);
+			var exists = false;
+				for (var i in ads.symHandlesToRelease) {
+					if ( ads.symHandlesToRelease[i] == result ) {
+						exists = true;
+						break;
+					}
+				}
+			if ( !exists ) ads.symHandlesToRelease.push(result);
+			handle.symhandle = result.readUInt32LE(0);
+			cb.call(ads, null, handle);
                 } 
             }
         });
