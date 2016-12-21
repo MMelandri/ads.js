@@ -111,7 +111,7 @@ var connect = function (cb) {
   });
 
   ads.dataCallback = function (data) {
-    ads.adsClient.emit('error', data);
+    ads.adsClient.emit('socketerror', data);
     ads.tcpClient.end();
   };
 
@@ -138,13 +138,13 @@ var connect = function (cb) {
 
 var end = function (cb) {
   var ads = this;
-  ads.tcpClient.removeListener('data', ads.dataCallback);
+  ads.tcpClient.removeListener('data', ( data ) => {
+    console.log( `end: removeListener : ${data}` );
+  });
   releaseSymHandles.call(ads, function () {
     releaseNotificationHandles.call(ads, function () {
-      if (ads.tcpClient) {
-        ads.tcpClient.end();
-      }
-      if (cb !== undefined) cb.call(ads);
+      if (ads.tcpClient) ads.tcpClient.end();
+      if (typeof cb === "function") cb.call(ads);
     });
   });
 };
